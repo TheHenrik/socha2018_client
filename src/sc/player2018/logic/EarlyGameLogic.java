@@ -13,6 +13,7 @@ public class EarlyGameLogic {
 
 	public static Move getTurn(GameState gameState) {
 		Player currentPlayer = gameState.getCurrentPlayer();
+		Player opponentPlayer = gameState.getOtherPlayer();
 		ArrayList<Move> possibleMoves = gameState.getPossibleMoves();
 		MoveList baseList = new MoveList(possibleMoves,gameState);
 
@@ -25,6 +26,12 @@ public class EarlyGameLogic {
 			}
 		} else {
 			// can we move to the next salad field?
+			if (opponentPlayer.getFieldIndex() == 9){
+				Move selectedMove = baseList.select(FieldType.SALAD).getNearest();
+				if (selectedMove != null) {
+					return selectedMove;
+				}
+			}
 			if (gameState.isOccupied(SALAD_FIELD)) {
 				// no we can't
 				Move selectedMove = baseList.getNearest();
