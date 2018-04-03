@@ -157,4 +157,5 @@ public class LogicHelper {
 
 		return (int) result;
 	}
+
 }

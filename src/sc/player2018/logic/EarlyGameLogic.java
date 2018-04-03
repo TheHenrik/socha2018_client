@@ -17,7 +17,7 @@ public class EarlyGameLogic {
 		ArrayList<Move> possibleMoves = gameState.getPossibleMoves();
 		MoveList baseList = new MoveList(possibleMoves,gameState);
 
-		if (currentPlayer.getSalads() == 5) {
+		if (currentPlayer.getSalads() == 5 && currentPlayer.getFieldIndex() < opponentPlayer.getFieldIndex()) {
 			// let's waste some turns in the beginning to lose a salad and wait for the
 			// enemy to move away
 			Move selectedMove = baseList.select(CardType.EAT_SALAD).getNearest();
@@ -26,7 +26,7 @@ public class EarlyGameLogic {
 			}
 		} else {
 			// can we move to the next salad field?
-			if (opponentPlayer.getFieldIndex() == 9){
+			if (opponentPlayer.getFieldIndex() == 9 && gameState.getTypeAt(opponentPlayer.getFieldIndex()) == FieldType.CARROT){
 				Move selectedMove = baseList.select(FieldType.SALAD).getNearest();
 				if (selectedMove != null) {
 					return selectedMove;

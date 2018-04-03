@@ -1,5 +1,6 @@
 package sc.player2018.logic;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

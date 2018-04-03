@@ -1,140 +1,154 @@
 package sc.player2018.logic;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import sc.plugin2018.Advance;
 import sc.plugin2018.CardType;
 import sc.plugin2018.FieldType;
 import sc.plugin2018.GameState;
 import sc.plugin2018.Move;
 import sc.plugin2018.Player;
+import sc.plugin2018.util.GameRuleLogic;
 
 public class MidGameLogic {
 	/*
-	 * Johannes' strategy is now deleted. Just lose our salads on the Saladfields on Position 22 & 42. After field 42 see EndGameLogic.
+	 * Plz do´nt kritisize mai inglish. Is there an easy way to get the distance
+	 * of a move, or do i have to copy the board and execute the move?
+	 * Software-Challenge-GUI is not workiing, so i cant test this programm, it would frustrate me anyway.
+	 * At this point i ignored carrot costs.
+	 * 
 	 */
 
-	private static int SALAD_FIELD_2 = 22; // 22 is OUR salad field
-	private static int SALAD_FIELD_3 = 42;
-	
 	public static Move getTurn(GameState gameState) {
 		Player currentPlayer = gameState.getCurrentPlayer();
-		Player opponentPlayer = gameState.getOtherPlayer();
 		int currentIndex = currentPlayer.getFieldIndex();
-		int opponentIndex = opponentPlayer.getFieldIndex();
 		ArrayList<Move> possibleMoves = gameState.getPossibleMoves();
-		MoveList baseList = new MoveList(possibleMoves,gameState);
-		// if we can eat a salad, we should
-		Move returnMove = baseList.getSaladEat();
-		
-		if(returnMove != null) {
-			return returnMove;
-		}						//strategy before SALAD_FIELD_2 if we are 2nd
-		if (opponentIndex > currentIndex && currentIndex < SALAD_FIELD_2){
-			if(gameState.getNextFieldByType(FieldType.POSITION_2, currentIndex) < SALAD_FIELD_2){	
-			returnMove = baseList.select(FieldType.POSITION_2).getNearest();
-				if(returnMove != null) {
-					return returnMove;
-				}
-			}
-			else if(gameState.getNextFieldByType(FieldType.POSITION_2, currentIndex) > SALAD_FIELD_2){	
-				if(!gameState.isOccupied(SALAD_FIELD_2)){
-				returnMove = baseList.select(FieldType.SALAD).getNearest();
-					if(returnMove != null) {
-						return returnMove;
-					}
-				}
-				else{
-					returnMove = baseList.select(FieldType.HEDGEHOG).getNearest();
-					if(returnMove != null) {
-						return returnMove;
-					}
-				}
-				}
-								//strategy before SALAD_FIELD_2 if we are 1st
-		if (currentIndex > opponentIndex && currentIndex < SALAD_FIELD_2){
-			if(gameState.getNextFieldByType(FieldType.POSITION_1, currentIndex) < SALAD_FIELD_2){	
-				returnMove = baseList.select(FieldType.POSITION_1).getNearest();
-					if(returnMove != null) {
-						return returnMove;
-					}
-				}
 
-			}
-			else if(gameState.getNextFieldByType(FieldType.POSITION_1, currentIndex) > SALAD_FIELD_2){
-				returnMove = baseList.select(FieldType.SALAD).getNearest();
-			}
-
-		}
-									//strategy before SALAD_FIELD_3 if we are 1st
-		if (currentIndex > opponentIndex && currentIndex < SALAD_FIELD_3){
-			if(gameState.getNextFieldByType(FieldType.POSITION_1, currentIndex) < SALAD_FIELD_3 ){	
-				returnMove = baseList.select(FieldType.POSITION_1).getNearest();
-					if(returnMove != null) {
-						return returnMove;
-					}
-				}
-
-			
-			else if(gameState.getNextFieldByType(FieldType.POSITION_1, currentIndex) > SALAD_FIELD_2){
-				returnMove = baseList.select(FieldType.SALAD).getNearest();
-			}
-		}
-									//strategy before SALAD_FIELD_3 if we are 2nd
-		if (currentIndex < opponentIndex && currentIndex < SALAD_FIELD_3){
-			if(gameState.getNextFieldByType(FieldType.POSITION_2, currentIndex) < SALAD_FIELD_3){	
-				returnMove = baseList.select(FieldType.POSITION_2).getNearest();
-					if(returnMove != null) {
-						return returnMove;
-					}
-				}
-				else if(gameState.getNextFieldByType(FieldType.POSITION_2, currentIndex) > SALAD_FIELD_3){	
-					if(!gameState.isOccupied(SALAD_FIELD_3)){
-					returnMove = baseList.select(FieldType.SALAD).getNearest();
-						if(returnMove != null) {
-							return returnMove;
-						}
-					}
-					else{
-						returnMove = baseList.select(FieldType.CARROT).getNearest();
-						if(returnMove != null) {
-							return returnMove;
-						}
-					}
-					}
-		}
-		/*if (currentIndex >= 22) {
-			// go back, you have salads to eat!
-			returnMove = baseList.getFallback();
-			if(returnMove != null) {
+		if (currentIndex == 22) {
+			Move returnMove = getChanceOfFallback(possibleMoves, gameState, currentIndex);
+			if (returnMove != null) {
 				return returnMove;
 			}
-		} else {
-			if (!gameState.isOccupied(SALAD_FIELD)) {
-				returnMove = baseList.select(FieldType.SALAD).getNearest();
-				if(returnMove != null) {
-					return returnMove;
-				}
-				returnMove = baseList.select(CardType.EAT_SALAD).getNearest();
-				if(returnMove != null) {
-					return returnMove;
-				}
-			} else {
-				if (currentIndex == FALLBACK_FIELD) {
-					returnMove = baseList.select(FieldType.POSITION_2).getNearest();
-					if(returnMove != null) {
-						return returnMove;
-					}
-				}
-				returnMove = baseList.getFallback();
-				if(returnMove != null) {
-					return returnMove;
-				}
-				returnMove = baseList.getNearest();
-				if(returnMove != null) {
-					return returnMove;
-				}
+		} else if (/*                          //if Movedistance is shorter than the distance to the next saladfield
+					 * getRelativSaladPos(possibleMoves, gameState, currentIndex)
+					 */ true) {
+			Move returnMove = getNearestPosMove(possibleMoves, gameState, currentIndex);
+			if (returnMove != null) {
+				return returnMove;
 			}
-		}*/
+		} else { // just if we haven´t returned a Move yet and can go to the next salad field
+			MoveList baseList = new MoveList(possibleMoves, gameState);
+			// if we can eat a salad, we should
+			Move returnMove = baseList.getSaladEat();
+
+			if (returnMove != null) {
+				return returnMove;
+			}
+		}
+
 		return null;
 	}
+
+	private static Move getNearestPosMove(ArrayList<Move> possibleMoves, GameState gameState, int currentIndex) {
+		List<Move> advanceMoves = new ArrayList<>();
+		int currentEnemyPos = gameState.getOtherPlayer().getFieldIndex();
+		int furthestEnemyPos = GameRuleLogic.calculateMoveableFields(gameState.getOtherPlayer().getCarrots())
+				+ currentEnemyPos;
+
+		for (Move move : possibleMoves) {
+			Advance advance = LogicHelper.getAdvance(move);
+			if (advance != null) {
+				int destination = currentIndex + advance.getDistance();
+				if (gameState.getTypeAt(destination) == FieldType.POSITION_1) {
+					if (destination >= furthestEnemyPos) {
+						advanceMoves.add(move);
+					}
+				} else if (gameState.getTypeAt(destination) == FieldType.POSITION_2) {
+					if (destination < currentEnemyPos) {
+						advanceMoves.add(move);
+					}
+				}
+			}
+		}
+
+		if (advanceMoves.size() > 0) {
+			Collections.sort(advanceMoves, LogicHelper.lowestDistanceComparator);
+			return advanceMoves.get(0);
+		}
+
+		return null;
+	}
+
+	private static Move getChanceOfFallback(ArrayList<Move> possibleMoves, GameState gameState, int currentIndex) {
+		int currentEnemyPos = gameState.getOtherPlayer().getFieldIndex();
+		int furthestEnemyPos = GameRuleLogic.calculateMoveableFields(gameState.getOtherPlayer().getCarrots())
+				+ currentEnemyPos;
+
+		if (currentIndex == 22
+				&& (furthestEnemyPos < 22 || getNearestPosMove(possibleMoves, gameState, currentIndex) == null)) {
+			MoveList baseList = new MoveList(possibleMoves, gameState);
+			Move returnMove = baseList.getFallback();
+
+			if (returnMove != null) {
+				return returnMove;
+			}
+		}
+
+		return null;
+	}
+
+	/*
+	 * private static boolean getRelativSaladPos(ArrayList<Move> possibleMoves,
+	 * GameState gameState, int currentIndex) { if
+	 * (gameState.getCurrentPlayer().getSalads() == 0) { return false; }
+	 * List<Move> advanceMoves = new ArrayList<>(); int currentEnemyPos =
+	 * gameState.getOtherPlayer().getFieldIndex(); Move move =
+	 * getNearestPosMove(possibleMoves, gameState, currentIndex); if
+	 * (gameState.getNextFieldByType(FieldType.SALAD,
+	 * gameState.getCurrentPlayer().getFieldIndex()) >= getMovePos(
+	 * getNearestPosMove(possibleMoves, gameState, currentIndex))) { return
+	 * true; } return false; }
+	 */
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// had fun reading that? ;)
