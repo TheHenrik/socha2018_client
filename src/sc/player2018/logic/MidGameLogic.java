@@ -17,7 +17,7 @@ public class MidGameLogic {
 	 * Plz do´nt kritisize mai inglish. Is there an easy way to get the distance
 	 * of a move, or do i have to copy the board and execute the move?
 	 * Software-Challenge-GUI is not workiing, so i cant test this programm, it would frustrate me anyway.
-	 * At this point i ignored carrot costs.
+	 * At this point i ignored carrot costs. We have enough carrots in this phase.
 	 * 
 	 */
 
@@ -99,7 +99,7 @@ public class MidGameLogic {
 		return null;
 	}
 
-	/*
+	/*																			//i donno how to get fieldindex of the destination of a move
 	 * private static boolean getRelativSaladPos(ArrayList<Move> possibleMoves,
 	 * GameState gameState, int currentIndex) { if
 	 * (gameState.getCurrentPlayer().getSalads() == 0) { return false; }
